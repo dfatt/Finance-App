@@ -11,9 +11,9 @@ class App extends CI_Controller {
         $this->load->library('form_validation');
     }
 
-	/**
+    /**
      * Стартовая страница приложения
-	 */
+     */
 	public function index()
 	{
 		$this->load->view('hello');
@@ -44,16 +44,28 @@ class App extends CI_Controller {
 
         $this->form_validation->set_rules($rules);
 
-        if ($this->form_validation->run() === FALSE)
-        {
+        if ($this->form_validation->run() === FALSE) {
             $this->load->view('/accounts/create');
-        }
-        else
-        {
+        } else {
             $this->account_model->create_account();
 
             redirect('/', 'refresh');
         }
+    }
+
+    /**
+     * Перевод средств
+     */
+    public function transfer()
+    {
+        // Если произвели отправку формы
+        if ($this->input->post()) {
+            if ($this->account_model->create_transfer()) {
+                redirect('/', 'refresh');
+            }
+        }
+
+        $this->load->view('/accounts/transfer', array('accounts' => $this->account_model->get_accounts()));
     }
 }
 

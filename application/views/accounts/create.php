@@ -2,7 +2,7 @@
 <html lang='en'>
 <head>
     <meta charset='utf-8'>
-    <title>Finance App</title>
+    <title>Создать счёт — Finance App</title>
     <link rel='stylesheet' type='text/css' media='all' href='/assets/css/style.css' />
 </head>
 <body>
