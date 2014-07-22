@@ -54,41 +54,42 @@ class Account_model extends CI_Model {
 
         $from = $post['from'];
         $to = $post['to'];
-        $commission_price = 0;
+
+        // Получаем сумму средств отправителя
+        $from_b = $this->db->get_where('accounts', array('serial' => $from))
+                           ->row()
+                           ->balance;
+
+        // Получаем сумму средств получателя
+        $to_b = $this->db->get_where('accounts', array('serial' => $to))
+                         ->row()
+                         ->balance;
+
+        // Подсчитываем нашу коммисию
+        $commission_price = round($from_b * 0.0099);
+
+        // Списываем средства у отправителя
+        $this->db->where('serial', $from)
+                 ->update('accounts', array('balance' => '0'));
+
+        // Начисляем средства получателю
+        $this->db->where('serial', $to)
+                 ->update('accounts', array('balance' => $from_b + $to_b - $commission_price));
+
+        // Начисляем средства на наш счёт
+        $this->db->where('serial', 0)
+                 ->update('accounts', array('balance' => $commission_price));
 
         // Добавляем информацию в таблицу переводов средств
         $item = array(
             'from' => $from,
             'to' => $to,
+            'amount' => $from_b,
             'date_create' => mdate("%Y-%m-%d %H:%i:%s", time())
         );
 
         // Если запись добавлена, списываем средства со счёта отправителя
         if ($this->db->insert('transfers', $item)) {
-
-            // Получаем сумму средств отправителя
-            $from_b = $this->db->get_where('accounts', array('serial' => $from))
-                               ->row();
-
-            // Получаем сумму средств получателя
-            $to_b = $this->db->get_where('accounts', array('serial' => $to))
-                             ->row();
-
-            // Подсчитываем нашу коммисию
-            $commission_price = round($from_b->balance * 0.0099);
-
-            // Списываем средства у отправителя
-            $this->db->where('serial', $from)
-                     ->update('accounts', array('balance' => '0'));
-
-            // Начисляем средства получателю
-            $this->db->where('serial', $to)
-                     ->update('accounts', array('balance' => $from_b->balance + $to_b->balance - $commission_price));
-
-            // Начисляем средства на наш счёт
-            $this->db->where('serial', 0)
-                     ->update('accounts', array('balance' => $commission_price));
-
             return true;
         } else {
             return false;

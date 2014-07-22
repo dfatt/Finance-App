@@ -67,6 +67,15 @@ class App extends CI_Controller {
 
         $this->load->view('/accounts/transfer', array('accounts' => $this->account_model->get_accounts()));
     }
+
+    /**
+     * Список счетов
+     */
+    public function accounts()
+    {
+        $this->load->helper('url');
+        $this->load->view('/accounts/list', array('accounts' => $this->account_model->get_accounts()));
+    }
 }
 
 /* End of file app.php */
