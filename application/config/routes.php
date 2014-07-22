@@ -38,7 +38,8 @@
 |
 */
 
-$route['default_controller'] = "welcome";
+$route['app/create-account'] = "app/create_account";
+$route['default_controller'] = "app";
 $route['404_override'] = '';
 
 
