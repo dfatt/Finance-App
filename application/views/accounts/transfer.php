@@ -18,7 +18,7 @@
 
             foreach($accounts as $account)
             {
-                $options[$account->serial] = $account->client;
+                $options[$account->serial] = $account->client . ' (' . $account->balance . ' ед.)';
             }
         ?>
         <p>

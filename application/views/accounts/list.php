@@ -23,7 +23,7 @@
             {
             ?>
                 <tr>
-                    <td><?php echo anchor('/account/' . $account->id, $account->client, 'target="_blank"') ?></td>
+                    <td><?php echo anchor('/app/account/' . $account->serial, $account->client, 'target="_blank"') ?></td>
                     <td><?php echo $account->serial ?></td>
                     <td><?php echo $account->balance ?></td>
                 </tr>

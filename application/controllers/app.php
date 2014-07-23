@@ -76,6 +76,22 @@ class App extends CI_Controller {
         $this->load->helper('url');
         $this->load->view('/accounts/list', array('accounts' => $this->account_model->get_accounts()));
     }
+
+    /**
+     * Просмотр истории по конкретному счёту
+     *
+     * @param $account_number
+     */
+    public function account($serial)
+    {
+        $data = array(
+            'history' => $this->account_model->get_history_by_account_number($serial),
+            'account' => $this->account_model->get_account_by_serial($serial)
+
+        );
+
+        $this->load->view('/accounts/history', $data);
+    }
 }
 
 /* End of file app.php */
