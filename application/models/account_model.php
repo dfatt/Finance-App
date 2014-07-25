@@ -148,13 +148,14 @@ class Account_model extends CI_Model {
         );
 
         // Если запись добавлена, списываем средства со счёта отправителя
-        if ($this->db->insert('transfers', $operation_incoming)) {
-            $this->db->insert('transfers', $operation_outgoing);
+        $this->db->insert('transfers', $operation_incoming)
+                 ->insert('transfers', $operation_outgoing);
 
-            $this->db->trans_complete();
-            return false;
-        } else {
-            return true;
+        $this->db->trans_complete();
+
+        if (false === $this->db->trans_status()) {
+            return 'Во время выполнения операции произошла ошибка.'
+                 . 'Мы уже чиним, а пока попробуйте повторить операцию ещё раз.';
         }
     }
 }
