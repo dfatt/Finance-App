@@ -11,7 +11,10 @@
     <h1>Перевести средства</h1>
 
     <div id='body'>
-        <div class='error'><?php echo validation_errors(); ?></div>
+        <div class='error'>
+            <?php echo validation_errors(); ?>
+            <?php echo $errors; ?>
+        </div>
         <?php echo form_open_multipart(''); ?>
         <?php
             $options = array();

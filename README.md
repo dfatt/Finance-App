@@ -30,7 +30,7 @@ CREATE TABLE `accounts` (
   `balance` int(11) DEFAULT NULL,
   `date_create` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `accounts` WRITE;
 /*!40000 ALTER TABLE `accounts` DISABLE KEYS */;
@@ -59,7 +59,7 @@ CREATE TABLE `transfers` (
   `outgoing` int(11) DEFAULT NULL,
   `date_create` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
 LOCK TABLES `transfers` WRITE;
 /*!40000 ALTER TABLE `transfers` DISABLE KEYS */;

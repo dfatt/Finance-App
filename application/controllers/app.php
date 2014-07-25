@@ -47,7 +47,8 @@ class App extends CI_Controller {
         if ($this->form_validation->run() === FALSE) {
             $this->load->view('/accounts/create');
         } else {
-            $this->account_model->create_account();
+            $data = $this->input->post();
+            $this->account_model->create_account($data);
 
             redirect('/', 'refresh');
         }
@@ -58,14 +59,19 @@ class App extends CI_Controller {
      */
     public function transfer()
     {
+        $errors = '';
+
         // Если произвели отправку формы
-        if ($this->input->post()) {
-            if ($this->account_model->create_transfer()) {
+        if ($data = $this->input->post()) {
+            $errors = $this->account_model->create_transfer($data);
+
+            // Если всё прошло без ошибок, переадресовываем на главную
+            if ($errors === false) {
                 redirect('/', 'refresh');
             }
         }
 
-        $this->load->view('/accounts/transfer', array('accounts' => $this->account_model->get_accounts()));
+        $this->load->view('/accounts/transfer', array('accounts' => $this->account_model->get_accounts(), 'errors' => $errors));
     }
 
     /**
@@ -80,7 +86,8 @@ class App extends CI_Controller {
     /**
      * Просмотр истории по конкретному счёту
      *
-     * @param $account_number
+     * @param $serial
+     * @internal param $account_number
      */
     public function account($serial)
     {

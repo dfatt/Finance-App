@@ -65,16 +65,15 @@ class Account_model extends CI_Model {
     /**
      * Создание счёта
      *
+     * @param $data
      * @return boolean
      */
-    public function create_account()
+    public function create_account($data)
     {
-        $post = $this->input->post();
-
         $item = array(
-            'client' => $post['client'],
-            'serial' => $post['serial'],
-            'balance' => $post['balance'],
+            'client' => $data['client'],
+            'serial' => $data['serial'],
+            'balance' => $data['balance'],
             'date_create' => mdate("%Y-%m-%d %H:%i:%s", time())
         );
 
@@ -84,19 +83,31 @@ class Account_model extends CI_Model {
     /**
      * Перевод средств
      *
+     * @param $data
      * @return boolean
      */
-    public function create_transfer()
+    public function create_transfer($data)
     {
-        $post = $this->input->post();
+        $from = $data['from'];
+        $to = $data['to'];
 
-        $from = $post['from'];
-        $to = $post['to'];
+        // Если пользователь хочет положить средства сам себе
+        if ($from == $to) {
+            return 'Вы не можете положить средства самому себе!';
+        }
 
         // Получаем сумму средств отправителя
         $from_b = $this->db->get_where('accounts', array('serial' => $from))
                            ->row()
                            ->balance;
+
+        // Если null, значит такого счёта не существует.
+        // Если 0, значит средств не хватает
+        if (is_null($from_b)) {
+            return 'Такого счёта не существует!';
+        } elseif (0 == $from_b) {
+            return 'На вашем счёте не хватает средств. Пополните ваш баланс.';
+        }
 
         // Получаем сумму средств получателя
         $to_b = $this->db->get_where('accounts', array('serial' => $to))
@@ -105,6 +116,8 @@ class Account_model extends CI_Model {
 
         // Подсчитываем нашу коммисию
         $commission_price = $from_b * 0.0099;
+
+        $this->db->trans_start();
 
         // Списываем средства у отправителя
         $this->db->where('serial', $from)
@@ -138,9 +151,10 @@ class Account_model extends CI_Model {
         if ($this->db->insert('transfers', $operation_incoming)) {
             $this->db->insert('transfers', $operation_outgoing);
 
-            return true;
-        } else {
+            $this->db->trans_complete();
             return false;
+        } else {
+            return true;
         }
     }
 }
